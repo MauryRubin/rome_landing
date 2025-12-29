@@ -27,9 +27,11 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 bg-rome-black rounded-lg flex items-center justify-center">
+              {/* Kept 'R' as it still fits Roam */}
               <span className="text-rome-accent font-bold text-xl">R</span>
             </div>
-            <span className="font-bold text-xl tracking-tight">Rome</span>
+            {/* UPDATED: Name changed to Roam */}
+            <span className="font-bold text-xl tracking-tight">Roam</span>
           </div>
 
           {/* Desktop Links */}
@@ -73,6 +75,12 @@ const Navbar = () => {
 const Hero = () => {
   const [activeZone, setActiveZone] = useState<'downtown' | 'midtown' | 'westend'>('downtown');
 
+  // Variants for the underline animation
+  const underlineVariants = {
+    initial: { scaleX: 0, originX: 0 },
+    hover: { scaleX: 1, originX: 0 }
+  };
+
   return (
     <section className="relative pt-28 pb-16 lg:pt-48 lg:pb-32 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -82,12 +90,28 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-rome-black mb-6 leading-tight">
-              Stop chasing appointments.<br />
+            {/* UPDATED: Headline with hover animation on "chasing" */}
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-rome-black mb-6 leading-tight cursor-default">
+              Stop{' '}
+              <motion.span 
+                className="relative inline-block cursor-pointer"
+                whileHover="hover"
+                initial="initial"
+              >
+                <span className="relative z-10">chasing</span>
+                <motion.span 
+                  variants={underlineVariants}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="absolute left-0 bottom-1 h-[6px] w-full bg-rome-accent/60 -z-0"
+                />
+              </motion.span>
+              {' '}appointments.<br />
               <span className="text-rome-gray">Command your route.</span>
             </h1>
+            
+            {/* UPDATED: Name changed to Roam */}
             <p className="mt-4 text-lg md:text-xl text-rome-gray max-w-2xl mx-auto leading-relaxed">
-              Rome lets mobile service providers set <strong>Booking Zones</strong>. You decide where you'll be and when. Your customers simply book a slot that matches your plan.
+              Roam lets mobile service providers set <strong>Booking Zones</strong>. You decide where you'll be and when. Your customers simply book a slot that matches your plan.
             </p>
             
             <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -108,7 +132,6 @@ const Hero = () => {
            initial={{ opacity: 0, scale: 0.95 }}
            animate={{ opacity: 1, scale: 1 }}
            transition={{ delay: 0.3, duration: 0.6 }}
-           // Responsive container: stacks on mobile, side-by-side on desktop. Height auto on mobile.
            className="mt-10 relative mx-auto max-w-6xl rounded-2xl border border-gray-200 shadow-2xl bg-white overflow-hidden flex flex-col md:flex-row h-auto md:h-[600px]"
         >
           {/* LEFT SIDEBAR: Zone Configuration */}
@@ -125,7 +148,7 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Zone List - constrained height on mobile */}
+            {/* Zone List */}
             <div className="p-4 space-y-3 flex-1 overflow-y-auto font-sans max-h-[300px] md:max-h-none bg-gray-50/50 md:bg-white">
                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-2">Your Zones</p>
                
@@ -213,7 +236,6 @@ const Hero = () => {
           </div>
 
           {/* RIGHT PANEL: The Map */}
-          {/* Fixed height on mobile, auto/flex-1 on desktop */}
           <div className="relative bg-[#F8FAFC] overflow-hidden transition-all duration-500 ease-in-out h-[400px] md:h-auto md:flex-1">
              
              {/* 1. Base Grid (City Blocks) */}
@@ -230,10 +252,10 @@ const Hero = () => {
                 {/* The "Lake" (Bottom) */}
                 <path 
                   d="M0,520 C150,510 300,530 450,520 S 700,500 900,510 V600 H0 Z" 
-                  fill="#e0f2fe" // Very light blue
+                  fill="#e0f2fe" 
                 />
                 
-                {/* --- ARTERIAL ROADS (Thicker) --- */}
+                {/* --- ARTERIAL ROADS --- */}
                 <line x1="-100" y1="250" x2="900" y2="450" stroke="#cbd5e1" strokeWidth="16" />
                 <line x1="550" y1="-50" x2="450" y2="800" stroke="#cbd5e1" strokeWidth="12" />
                 
@@ -257,18 +279,17 @@ const Hero = () => {
              {/* Zone 1: Downtown (Gold) */}
              <div 
                 onClick={() => setActiveZone('downtown')}
-                // Adjusted positioning for mobile vs desktop. Smaller scale on mobile.
                 className={`absolute bottom-[25%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out cursor-pointer group ${
                   activeZone === 'downtown' ? 'opacity-100 scale-100 z-10' : 'opacity-60 scale-90 md:scale-95 grayscale hover:grayscale-0 hover:opacity-90'
                 }`}
              >
-                {/* Tooltip - Smaller on mobile */}
+                {/* Tooltip */}
                 <div className={`absolute -top-12 md:-top-14 left-1/2 transform -translate-x-1/2 bg-white px-3 py-2 md:px-4 md:py-2 rounded-lg shadow-xl border border-gray-100 flex flex-col items-center min-w-[120px] md:min-w-[140px] transition-all duration-300 ${activeZone === 'downtown' ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}>
                    <span className="text-xs font-bold text-rome-black whitespace-nowrap">Downtown Core</span>
                    <span className="text-[10px] text-gray-500 font-mono">Mon • 9-12</span>
                    <div className="w-2 h-2 bg-white transform rotate-45 absolute -bottom-1 border-r border-b border-gray-100"></div>
                 </div>
-                {/* Circle - Smaller on mobile */}
+                {/* Circle */}
                 <div className="w-40 h-40 md:w-64 md:h-64 rounded-full bg-rome-accent/10 border-2 border-rome-accent flex items-center justify-center shadow-[0_0_40px_rgba(212,175,55,0.2)] group-hover:scale-105 transition-transform">
                    <div className="w-2 h-2 bg-rome-accent rounded-full animate-ping absolute"></div>
                    <div className="w-2 h-2 bg-rome-accent rounded-full relative"></div>
@@ -278,7 +299,6 @@ const Hero = () => {
              {/* Zone 2: Midtown (Blue) */}
              <div 
                  onClick={() => setActiveZone('midtown')}
-                 // Adjusted positioning for mobile vs desktop. Smaller scale on mobile.
                  className={`absolute top-[30%] md:top-[40%] right-[10%] md:right-[8%] transform transition-all duration-500 ease-in-out cursor-pointer group ${
                    activeZone === 'midtown' ? 'opacity-100 scale-100 md:scale-110 z-10' : 'opacity-60 scale-90 grayscale hover:grayscale-0 hover:opacity-90'
                  }`}
@@ -299,7 +319,6 @@ const Hero = () => {
              {/* Zone 3: West End (Emerald Green) */}
              <div 
                  onClick={() => setActiveZone('westend')}
-                 // Adjusted positioning for mobile vs desktop. Smaller scale on mobile.
                  className={`absolute bottom-[25%] md:bottom-[30%] left-[10%] transform transition-all duration-500 ease-in-out cursor-pointer group ${
                    activeZone === 'westend' ? 'opacity-100 scale-100 md:scale-110 z-10' : 'opacity-60 scale-90 grayscale hover:grayscale-0 hover:opacity-90'
                  }`}
@@ -357,7 +376,8 @@ const Steps = () => {
     <section id="how-it-works" className="py-16 md:py-24 bg-rome-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">The Rome Workflow</h2>
+          {/* UPDATED: Name changed to Roam */}
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">The Roam Workflow</h2>
           <p className="text-gray-400 text-lg">Simplify your logistics in three steps.</p>
         </div>
 
@@ -408,8 +428,9 @@ const UseCases = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
          <div className="mb-12 md:mb-16 text-center md:text-left">
           <h2 className="text-3xl md:text-4xl font-bold text-rome-black mb-6">Built for the Mobile Workforce</h2>
+          {/* UPDATED: Name changed to Roam */}
           <p className="text-lg text-rome-gray max-w-2xl mx-auto md:mx-0">
-            If your business moves, Rome helps you move less and earn more.
+            If your business moves, Roam helps you move less and earn more.
           </p>
         </div>
 
@@ -461,9 +482,11 @@ const Footer = () => {
             <div className="col-span-2">
                 <div className="flex items-center gap-2 mb-6">
                     <div className="w-10 h-10 bg-rome-black rounded-xl flex items-center justify-center">
+                    {/* Kept 'R' */}
                     <span className="text-rome-accent font-bold text-2xl">R</span>
                     </div>
-                    <span className="font-bold text-2xl tracking-tight text-rome-black">Rome</span>
+                    {/* UPDATED: Name changed to Roam */}
+                    <span className="font-bold text-2xl tracking-tight text-rome-black">Roam</span>
                 </div>
                 <p className="text-rome-gray max-w-xs">
                     The location-first scheduling platform for mobile service professionals.
@@ -492,7 +515,8 @@ const Footer = () => {
             <a href="#" className="hover:text-rome-black transition-colors">Terms of Service</a>
           </div>
           <div>
-            © {new Date().getFullYear()} Rome Technologies Inc. All rights reserved.
+            {/* UPDATED: Copyright name changed to Roam */}
+            © {new Date().getFullYear()} Roam Technologies Inc. All rights reserved.
           </div>
         </div>
       </div>
