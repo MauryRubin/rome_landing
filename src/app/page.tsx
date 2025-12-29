@@ -47,7 +47,8 @@ const WaitlistModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 z-10"
+            // UPDATED: Changed p-8 to p-6 for mobile, keeping sm:p-8 for desktop
+            className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8 z-10"
           >
             <button 
               onClick={onClose}
@@ -424,17 +425,17 @@ const Steps = () => {
     {
       icon: <MapPin className="w-6 h-6 text-white" />,
       title: "Create a Zone",
-      desc: "Draw a circle on the map. This is where you will be working."
+      desc: "Create a circle on the map. This is the area you will be working in."
     },
     {
       icon: <Calendar className="w-6 h-6 text-white" />,
       title: "Set the Schedule",
-      desc: "Assign a date and time window to that specific zone (e.g., 'West End on Tuesdays')."
+      desc: "Assign dates and a time window to that specific zone (e.g. 'West End on Tuesday 1pm-6pm)."
     },
     {
       icon: <Clock className="w-6 h-6 text-white" />,
       title: "Auto-Booking",
-      desc: "Customers in that area can only book times when you are nearby. No more cross-town drives."
+      desc: "Customers simply enter their location to view and book only the specific time slots you have assigned to their zone "
     }
   ];
 

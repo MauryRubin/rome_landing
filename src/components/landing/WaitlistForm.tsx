@@ -13,7 +13,7 @@ export const WaitlistForm = () => {
     setStatus("loading");
 
     // REPLACE 'YOUR_EMAIL@gmail.com' WITH YOUR ACTUAL EMAIL
-    const FORM_ENDPOINT = "https://formsubmit.co/ajax/maurydr1@gmail.com";
+    const FORM_ENDPOINT = "https://formsubmit.co/ajax/YOUR_EMAIL@gmail.com";
 
     try {
       const response = await fetch(FORM_ENDPOINT, {
@@ -24,8 +24,8 @@ export const WaitlistForm = () => {
         },
         body: JSON.stringify({ 
             email,
-            _subject: "New Roam Waitlist Signup!", // Subject line in your inbox
-            _template: "table" // Formats the email nicely
+            _subject: "New Roam Waitlist Signup!",
+            _template: "table"
         }),
       });
 
@@ -53,7 +53,7 @@ export const WaitlistForm = () => {
             <div className="bg-green-100 p-1 rounded-full">
               <Check size={16} />
             </div>
-            <span className="font-medium">You're on the list! We'll be in touch.</span>
+            <span className="font-medium text-sm md:text-base">You're on the list! We'll be in touch.</span>
           </motion.div>
         ) : (
           <motion.form
@@ -61,7 +61,7 @@ export const WaitlistForm = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             onSubmit={handleSubmit}
-            className="relative flex items-center"
+            className="relative"
           >
             <input
               type="email"
@@ -69,19 +69,26 @@ export const WaitlistForm = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-6 py-4 pr-36 bg-white border border-gray-200 rounded-full text-rome-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rome-accent/50 focus:border-rome-accent transition-all shadow-sm hover:shadow-md"
+              // UPDATED CLASSES:
+              // 1. Removed right padding on mobile (so text doesn't cut off early)
+              // 2. Added sm:pr-40 to reserve space for the button ONLY on desktop
+              className="w-full px-6 py-4 bg-white border border-gray-200 rounded-full text-rome-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rome-accent/50 focus:border-rome-accent transition-all shadow-sm hover:shadow-md sm:pr-44"
               disabled={status === "loading"}
             />
+            
             <button
               type="submit"
               disabled={status === "loading"}
-              className="absolute right-2 top-2 bottom-2 bg-rome-black text-white px-6 rounded-full font-bold text-sm hover:bg-rome-accent hover:text-rome-black transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+              // UPDATED CLASSES:
+              // 1. Default (Mobile): w-full, mt-3, py-4 (Big clickable button below input)
+              // 2. Desktop (sm:): absolute position, no margin, auto width (Sits inside input)
+              className="w-full mt-3 py-4 sm:mt-0 sm:py-0 sm:absolute sm:right-2 sm:top-2 sm:bottom-2 sm:w-auto bg-rome-black text-white px-6 rounded-full font-bold text-sm hover:bg-rome-accent hover:text-rome-black transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {status === "loading" ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
                 <>
-                  Join The Wait List <ChevronRight size={16} />
+                  Join The Waitlist <ChevronRight size={16} />
                 </>
               )}
             </button>
