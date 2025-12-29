@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   MapPin, 
   Calendar, 
@@ -13,69 +13,145 @@ import {
   Scissors,
   GraduationCap
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { WaitlistForm } from "@/components/landing/WaitlistForm";
 
 // --- Components ---
 
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+// 1. New Modal Component
+const WaitlistModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isOpen]);
 
   return (
-    <nav className="fixed w-full z-50 bg-rome-white/80 backdrop-blur-md border-b border-rome-gray/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-            <div className="w-8 h-8 bg-rome-black rounded-lg flex items-center justify-center">
-              {/* Kept 'R' as it still fits Roam */}
-              <span className="text-rome-accent font-bold text-xl">R</span>
-            </div>
-            {/* UPDATED: Name changed to Roam */}
-            <span className="font-bold text-xl tracking-tight">Roam</span>
-          </div>
-
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#how-it-works" className="text-sm font-medium text-rome-gray hover:text-rome-black transition-colors">How it Works</a>
-            <a href="#features" className="text-sm font-medium text-rome-gray hover:text-rome-black transition-colors">For Providers</a>
-            <button className="text-sm font-medium px-4 py-2 text-rome-black hover:bg-rome-light rounded-full transition-colors">
-              Log in
-            </button>
-            <button className="text-sm font-bold px-5 py-2.5 bg-rome-black text-white rounded-full hover:bg-rome-dark transition-all transform hover:scale-105">
-              Get Started
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-rome-black p-2">
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
+    <AnimatePresence>
       {isOpen && (
-        <div className="md:hidden bg-white border-b border-rome-gray/10 animate-in slide-in-from-top-5">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="#how-it-works" className="block px-3 py-2 text-base font-medium text-rome-gray hover:text-rome-black hover:bg-rome-light rounded-md" onClick={() => setIsOpen(false)}>How it Works</a>
-            <a href="#features" className="block px-3 py-2 text-base font-medium text-rome-gray hover:text-rome-black hover:bg-rome-light rounded-md" onClick={() => setIsOpen(false)}>For Providers</a>
-            <div className="pt-4 flex flex-col gap-2 px-3">
-              <button className="w-full text-center px-4 py-3 bg-rome-light text-rome-black font-medium rounded-lg">Log in</button>
-              <button className="w-full text-center px-4 py-3 bg-rome-black text-white font-bold rounded-lg">Get Started</button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-rome-black/40 backdrop-blur-sm"
+          />
+          
+          {/* Modal Content */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 z-10"
+          >
+            <button 
+              onClick={onClose}
+              className="absolute top-4 right-4 text-rome-gray hover:text-rome-black transition-colors"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className="text-center mb-2">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-rome-black rounded-xl mb-4">
+                <span className="text-rome-accent font-bold text-2xl">R</span>
+              </div>
+              <h3 className="text-2xl font-bold text-rome-black">Join the Waitlist</h3>
+              <p className="text-rome-gray mt-2 text-sm">
+                Get early access to Roam and optimize your route today.
+              </p>
             </div>
-          </div>
+
+            {/* Reusing the Waitlist Form, but creating a wrapper to override margins if needed */}
+            <div className="-mt-4"> 
+              <WaitlistForm />
+            </div>
+          </motion.div>
         </div>
       )}
-    </nav>
+    </AnimatePresence>
+  );
+};
+
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false); // State for the popup
+
+  return (
+    <>
+      <nav className="fixed w-full z-50 bg-rome-white/80 backdrop-blur-md border-b border-rome-gray/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+              <div className="w-8 h-8 bg-rome-black rounded-lg flex items-center justify-center">
+                <span className="text-rome-accent font-bold text-xl">R</span>
+              </div>
+              <span className="font-bold text-xl tracking-tight">Roam</span>
+            </div>
+
+            {/* Desktop Links */}
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#how-it-works" className="text-sm font-medium text-rome-gray hover:text-rome-black transition-colors">How it Works</a>
+              <a href="#features" className="text-sm font-medium text-rome-gray hover:text-rome-black transition-colors">For Providers</a>
+              <button className="text-sm font-medium px-4 py-2 text-rome-black hover:bg-rome-light rounded-full transition-colors">
+                Log in
+              </button>
+              {/* UPDATED: Button now opens modal instead of link */}
+              <button 
+                onClick={() => setShowModal(true)}
+                className="text-sm font-bold px-5 py-2.5 bg-rome-black text-white rounded-full hover:bg-rome-dark transition-all transform hover:scale-105"
+              >
+                Get Started
+              </button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden flex items-center">
+              <button onClick={() => setIsOpen(!isOpen)} className="text-rome-black p-2">
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className="md:hidden bg-white border-b border-rome-gray/10 animate-in slide-in-from-top-5">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <a href="#how-it-works" className="block px-3 py-2 text-base font-medium text-rome-gray hover:text-rome-black hover:bg-rome-light rounded-md" onClick={() => setIsOpen(false)}>How it Works</a>
+              <a href="#features" className="block px-3 py-2 text-base font-medium text-rome-gray hover:text-rome-black hover:bg-rome-light rounded-md" onClick={() => setIsOpen(false)}>For Providers</a>
+              <div className="pt-4 flex flex-col gap-2 px-3">
+                <button className="w-full text-center px-4 py-3 bg-rome-light text-rome-black font-medium rounded-lg">Log in</button>
+                {/* UPDATED: Mobile button opens modal */}
+                <button 
+                  onClick={() => {
+                    setIsOpen(false);
+                    setShowModal(true);
+                  }}
+                  className="block w-full text-center px-4 py-3 bg-rome-black text-white font-bold rounded-lg"
+                >
+                  Get Started
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Render the Modal */}
+      <WaitlistModal isOpen={showModal} onClose={() => setShowModal(false)} />
+    </>
   );
 };
 
 const Hero = () => {
   const [activeZone, setActiveZone] = useState<'downtown' | 'midtown' | 'westend'>('downtown');
 
-  // Variants for the underline animation
   const underlineVariants = {
     initial: { scaleX: 0, originX: 0 },
     hover: { scaleX: 1, originX: 0 }
@@ -90,7 +166,6 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {/* UPDATED: Headline with hover animation on "chasing" */}
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-rome-black mb-6 leading-tight cursor-default">
               Stop{' '}
               <motion.span 
@@ -109,21 +184,12 @@ const Hero = () => {
               <span className="text-rome-gray">Command your route.</span>
             </h1>
             
-            {/* UPDATED: Name changed to Roam */}
             <p className="mt-4 text-lg md:text-xl text-rome-gray max-w-2xl mx-auto leading-relaxed">
               Roam lets mobile service providers set <strong>Booking Zones</strong>. You decide where you'll be and when. Your customers simply book a slot that matches your plan.
             </p>
             
-            <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button className="w-full sm:w-auto px-8 py-4 bg-rome-black text-white font-bold text-lg rounded-full hover:bg-rome-accent hover:text-rome-black transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
-                Start Free Trial <ChevronRight size={20} />
-              </button>
-              <button className="w-full sm:w-auto px-8 py-4 bg-white border border-rome-gray/20 text-rome-black font-medium text-lg rounded-full hover:bg-rome-light transition-all">
-                View Demo
-              </button>
-            </div>
+            <WaitlistForm />
             
-            <p className="mt-4 text-sm text-rome-gray">No credit card required. Cancel anytime.</p>
           </motion.div>
         </div>
 
@@ -376,7 +442,6 @@ const Steps = () => {
     <section id="how-it-works" className="py-16 md:py-24 bg-rome-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 md:mb-16">
-          {/* UPDATED: Name changed to Roam */}
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">The Roam Workflow</h2>
           <p className="text-gray-400 text-lg">Simplify your logistics in three steps.</p>
         </div>
@@ -428,7 +493,6 @@ const UseCases = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
          <div className="mb-12 md:mb-16 text-center md:text-left">
           <h2 className="text-3xl md:text-4xl font-bold text-rome-black mb-6">Built for the Mobile Workforce</h2>
-          {/* UPDATED: Name changed to Roam */}
           <p className="text-lg text-rome-gray max-w-2xl mx-auto md:mx-0">
             If your business moves, Roam helps you move less and earn more.
           </p>
@@ -461,14 +525,7 @@ const CTA = () => {
          <p className="text-xl md:text-2xl text-rome-gray mb-12 leading-relaxed">
            Join thousands of service providers who have reclaimed their time and boosted their efficiency.
          </p>
-         <div className="flex flex-col sm:flex-row gap-5 justify-center">
-            <button className="px-10 py-5 bg-rome-black text-white font-bold text-xl rounded-full hover:bg-rome-accent hover:text-rome-black transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
-              Get Started for Free
-            </button>
-         </div>
-         <p className="mt-6 text-sm text-rome-gray">
-            Free 14-day trial. No credit card required.
-         </p>
+         <WaitlistForm />
        </div>
     </section>
   );
@@ -482,10 +539,8 @@ const Footer = () => {
             <div className="col-span-2">
                 <div className="flex items-center gap-2 mb-6">
                     <div className="w-10 h-10 bg-rome-black rounded-xl flex items-center justify-center">
-                    {/* Kept 'R' */}
                     <span className="text-rome-accent font-bold text-2xl">R</span>
                     </div>
-                    {/* UPDATED: Name changed to Roam */}
                     <span className="font-bold text-2xl tracking-tight text-rome-black">Roam</span>
                 </div>
                 <p className="text-rome-gray max-w-xs">
@@ -515,7 +570,6 @@ const Footer = () => {
             <a href="#" className="hover:text-rome-black transition-colors">Terms of Service</a>
           </div>
           <div>
-            {/* UPDATED: Copyright name changed to Roam */}
             © {new Date().getFullYear()} Roam Technologies Inc. All rights reserved.
           </div>
         </div>
