@@ -430,7 +430,7 @@ const Steps = () => {
     {
       icon: <Calendar className="w-6 h-6 text-white" />,
       title: "Set the Schedule",
-      desc: "Assign dates and a time window to that specific zone (e.g. 'West End on Tuesday 1pm-6pm)."
+      desc: "Assign dates and a time window to that specific zone (e.g. West End on Tuesday 1pm-6pm)."
     },
     {
       icon: <Clock className="w-6 h-6 text-white" />,
